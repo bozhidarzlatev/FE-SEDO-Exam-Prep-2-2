@@ -1,32 +1,37 @@
 pipeline {
-    agent any
+    agent  any
     
-    stages{
-        stage ('Checkout') {
-            steps{
-                Checkout scm
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
             }
         }
 
-        stage ('restore') {
-            steps{
+
+        stage('Restore Dependencies') {
+            steps {
                 bat 'dotnet restore'
             }
         }
 
-        stage ('Build') {
-            steps{
-                bat 'dotnet build'
+        stage('Build') {
+            steps {
+                bat 'dotnet build --no-restore'
             }
         }
 
-        stage ('TEsts') {
-            steps{
+        stage('Test') {
+            steps {
                 bat 'dotnet test --no-build --verbosity normal'
             }
         }
+    }
 
-
-
+    post {
+        always {
+            echo 'Pipeline execution complete.'
+        }
     }
 }
